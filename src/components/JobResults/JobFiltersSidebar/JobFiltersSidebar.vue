@@ -16,7 +16,7 @@
         <p>Placeholder</p>
       </accordion-element>
 
-      <job-filters-sidebar-organisations />
+      <job-filters-sidebar-organizations />
     </section>
   </div>
 </template>
@@ -24,14 +24,14 @@
 <script>
 import ActionButton from "@/components/Shared/ActionButton.vue";
 import AccordionElement from "@/components/Shared/AccordionElement.vue";
-import JobFiltersSidebarOrganisations from "@/components/JobResults/JobFiltersSidebar/JobFiltersSidebarOrganisations.vue";
+import JobFiltersSidebarOrganizations from "@/components/JobResults/JobFiltersSidebar/JobFiltersSidebarOrganizations.vue";
 
 export default {
   name: "JobFiltersSidebar",
   components: {
     ActionButton,
     AccordionElement,
-    JobFiltersSidebarOrganisations,
+    JobFiltersSidebarOrganizations,
   },
 };
 </script>
