@@ -34,9 +34,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { computed, onMounted } from "vue";
 
-import { FETCH_JOBS, FILTERED_JOBS } from "@/store/constants";
+import useCurrentPage from "@/composables/useCurrentPage";
+import usePrevAndNextPages from "@/composables/usePrevAndNextPages";
+import { useFilteredJobs, useFetchJobsDispatch } from "@/store/composables";
 import JobListing from "@/components/JobResults/JobListing.vue";
 
 export default {
@@ -44,36 +46,61 @@ export default {
   components: {
     JobListing,
   },
-  computed: {
-    ...mapGetters([FILTERED_JOBS]),
-    currentPage() {
-      const pageString = this.$route.query.page || "1";
-      return Number.parseInt(pageString);
-    },
-    previousPage() {
-      const previousPage = this.currentPage - 1;
-      const firstPage = 1;
-      return previousPage >= firstPage ? previousPage : undefined;
-    },
-    nextPage() {
-      const nextPage = this.currentPage + 1;
-      const maxPage = Math.ceil(this.FILTERED_JOBS.length / 10);
-      return nextPage <= maxPage ? nextPage : undefined;
-    },
-    displayedJobs() {
-      const pageNumber = this.currentPage;
+  // Composition API:
+  setup() {
+    onMounted(useFetchJobsDispatch);
+
+    const filteredJobs = useFilteredJobs();
+
+    const currentPage = useCurrentPage();
+
+    const maxPage = computed(() => Math.ceil(filteredJobs.value.length / 10));
+
+    const { previousPage, nextPage } = usePrevAndNextPages(
+      currentPage,
+      maxPage
+    );
+
+    const displayedJobs = computed(() => {
+      const pageNumber = currentPage.value;
       const firstJobIndex = (pageNumber - 1) * 10;
       const lastJobIndex = pageNumber * 10;
-      return this.FILTERED_JOBS.slice(firstJobIndex, lastJobIndex);
-    },
-    // ...mapState(["jobs"]),  we used it to get the original array of jobs from the store before mapGetters (introducing filters)
+      return filteredJobs.value.slice(firstJobIndex, lastJobIndex);
+    });
+
+    return { currentPage, previousPage, nextPage, displayedJobs };
   },
-  async mounted() {
-    // this.$store.dispatch(FETCH_JOBS);
-    this.FETCH_JOBS();
-  },
-  methods: {
-    ...mapActions([FETCH_JOBS]), //together with line 71 does the same as line 71
-  },
+  // Options API:
+  // computed: {
+  //   ...mapGetters([FILTERED_JOBS]),
+  //   currentPage() {
+  //     const pageString = this.$route.query.page || "1";
+  //     return Number.parseInt(pageString);
+  //   },
+  //   previousPage() {
+  //     const previousPage = this.currentPage - 1;
+  //     const firstPage = 1;
+  //     return previousPage >= firstPage ? previousPage : undefined;
+  //   },
+  //   nextPage() {
+  //     const nextPage = this.currentPage + 1;
+  //     const maxPage = Math.ceil(this.FILTERED_JOBS.length / 10);
+  //     return nextPage <= maxPage ? nextPage : undefined;
+  //   },
+  //   displayedJobs() {
+  //     const pageNumber = this.currentPage;
+  //     const firstJobIndex = (pageNumber - 1) * 10;
+  //     const lastJobIndex = pageNumber * 10;
+  //     return this.FILTERED_JOBS.slice(firstJobIndex, lastJobIndex);
+  //   },
+  //   // ...mapState(["jobs"]),  we used it to get the original array of jobs from the store before mapGetters (introducing filters)
+  // },
+  // async mounted() {
+  //   // this.$store.dispatch(FETCH_JOBS); // did the same as next line together with mapActions
+  //   this.FETCH_JOBS();
+  // },
+  // methods: {
+  //   ...mapActions([FETCH_JOBS]), // dispaches an action that commits a mutation
+  // },
 };
 </script>
