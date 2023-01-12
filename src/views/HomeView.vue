@@ -2,12 +2,15 @@
   <hero-component />
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
+
 import HeroComponent from "@/components/JobSearch/HeroComponent.vue";
-export default {
+
+export default defineComponent({
   name: "HomeView",
   components: {
     HeroComponent,
   },
-};
+});
 </script>

@@ -33,15 +33,15 @@
   </main>
 </template>
 
-<script>
-import { computed, onMounted } from "vue";
+<script lang="ts">
+import { computed, onMounted, defineComponent } from "vue";
 
 import useCurrentPage from "@/composables/useCurrentPage";
 import usePrevAndNextPages from "@/composables/usePrevAndNextPages";
 import { useFilteredJobs, useFetchJobsDispatch } from "@/store/composables";
 import JobListing from "@/components/JobResults/JobListing.vue";
 
-export default {
+export default defineComponent({
   name: "JobListings",
   components: {
     JobListing,
@@ -102,5 +102,5 @@ export default {
   // methods: {
   //   ...mapActions([FETCH_JOBS]), // dispaches an action that commits a mutation
   // },
-};
+});
 </script>

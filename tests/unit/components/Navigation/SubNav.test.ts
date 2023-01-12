@@ -6,7 +6,10 @@ jest.mock("@/store/composables");
 import useConfirmRoute from "@/composables/useConfirmRoute";
 jest.mock("@/composables/useConfirmRoute");
 
-import SubNav from "@/components/Navigation/SubNav";
+import SubNav from "@/components/Navigation/SubNav.vue";
+
+const useFilteredJobsMock = useFilteredJobs as jest.Mock;
+const useConfirmRouteMock = useConfirmRoute as jest.Mock;
 
 describe("SubNav", () => {
   const createConfig = () => ({
@@ -19,8 +22,8 @@ describe("SubNav", () => {
 
   describe("when user is on job page", () => {
     it("displays job count", () => {
-      useConfirmRoute.mockReturnValue(true);
-      useFilteredJobs.mockReturnValue([{ id: 1 }, { id: 2 }]);
+      useConfirmRouteMock.mockReturnValue(true);
+      useFilteredJobsMock.mockReturnValue([{ id: 1 }, { id: 2 }]);
       const wrapper = mount(SubNav, createConfig());
       const jobCount = wrapper.find("[data-test='job-count']");
       expect(jobCount.text()).toMatch("2 jobs matched");
@@ -29,8 +32,8 @@ describe("SubNav", () => {
 
   describe("when user is not on job page", () => {
     it("does NOT display job count", () => {
-      useConfirmRoute.mockReturnValue(false);
-      useFilteredJobs.mockReturnValue([]);
+      useConfirmRouteMock.mockReturnValue(false);
+      useFilteredJobsMock.mockReturnValue([]);
       const wrapper = mount(SubNav, createConfig());
       const jobCount = wrapper.find("[data-test='job-count']");
       expect(jobCount.exists()).toBe(false);

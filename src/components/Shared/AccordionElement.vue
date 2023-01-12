@@ -17,10 +17,10 @@
   </div>
 </template>
 
-<script>
-import { computed, ref } from "vue";
+<script lang="ts">
+import { computed, ref, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "AccordionElement",
   // OPTIONS API:
   props: {
@@ -64,5 +64,5 @@ export default {
   //     this.isOpen = !this.isOpen;
   //   },
   // },
-};
+});
 </script>

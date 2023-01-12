@@ -3,14 +3,17 @@ import { shallowMount, flushPromises, RouterLinkStub } from "@vue/test-utils";
 
 import { useFilteredJobs, useFetchJobsDispatch } from "@/store/composables";
 jest.mock("@/store/composables");
+const useFilteredJobsMock = useFilteredJobs as jest.Mock;
 
 import useCurrentPage from "@/composables/useCurrentPage";
 jest.mock("@/composables/useCurrentPage");
+const useCurrentPageMock = useCurrentPage as jest.Mock;
 
 import usePrevAndNextPages from "@/composables/usePrevAndNextPages";
 jest.mock("@/composables/usePrevAndNextPages");
+const usePrevAndNextPagesMock = usePrevAndNextPages as jest.Mock;
 
-import JobListings from "@/components/JobResults/JobListings";
+import JobListings from "@/components/JobResults/JobListings.vue";
 
 describe("JobListings", () => {
   const createConfig = () => ({
@@ -23,18 +26,18 @@ describe("JobListings", () => {
 
   describe("when component mounts", () => {
     it("makes call to fetch jobs from API", () => {
-      useFilteredJobs.mockReturnValue({ value: [] });
-      useCurrentPage.mockReturnValue({ value: 2 });
-      usePrevAndNextPages.mockReturnValue({ previousPage: 1, nextPage: 3 });
+      useFilteredJobsMock.mockReturnValue({ value: [] });
+      useCurrentPageMock.mockReturnValue({ value: 2 });
+      usePrevAndNextPagesMock.mockReturnValue({ previousPage: 1, nextPage: 3 });
       shallowMount(JobListings, createConfig());
       expect(useFetchJobsDispatch).toHaveBeenCalled();
     });
   });
 
   it("creates a job listing for a maximum of 10 jobs per page", async () => {
-    useFilteredJobs.mockReturnValue({ value: Array(15).fill({}) });
-    useCurrentPage.mockReturnValue({ value: 1 });
-    usePrevAndNextPages.mockReturnValue({
+    useFilteredJobsMock.mockReturnValue({ value: Array(15).fill({}) });
+    useCurrentPageMock.mockReturnValue({ value: 1 });
+    usePrevAndNextPagesMock.mockReturnValue({
       previousPage: undefined,
       nextPage: 2,
     });
@@ -45,18 +48,18 @@ describe("JobListings", () => {
   });
 
   it("displays page number", () => {
-    useFilteredJobs.mockReturnValue({ value: [] });
-    useCurrentPage.mockReturnValue(ref(5));
-    usePrevAndNextPages.mockReturnValue({ previousPage: 4, nextPage: 6 });
+    useFilteredJobsMock.mockReturnValue({ value: [] });
+    useCurrentPageMock.mockReturnValue(ref(5));
+    usePrevAndNextPagesMock.mockReturnValue({ previousPage: 4, nextPage: 6 });
     const wrapper = shallowMount(JobListings, createConfig());
     expect(wrapper.text()).toMatch("Page 5");
   });
 
   describe("when user is on first page of job results", () => {
     it("doesn't show link to previous page", async () => {
-      useFilteredJobs.mockReturnValue({ value: [] });
-      useCurrentPage.mockReturnValue(ref(1));
-      usePrevAndNextPages.mockReturnValue({
+      useFilteredJobsMock.mockReturnValue({ value: [] });
+      useCurrentPageMock.mockReturnValue(ref(1));
+      usePrevAndNextPagesMock.mockReturnValue({
         previousPage: undefined,
         nextPage: 2,
       });
@@ -67,9 +70,9 @@ describe("JobListings", () => {
     });
 
     it("shows link to next page", async () => {
-      useFilteredJobs.mockReturnValue({ value: [] });
-      useCurrentPage.mockReturnValue(ref(1));
-      usePrevAndNextPages.mockReturnValue({
+      useFilteredJobsMock.mockReturnValue({ value: [] });
+      useCurrentPageMock.mockReturnValue(ref(1));
+      usePrevAndNextPagesMock.mockReturnValue({
         previousPage: undefined,
         nextPage: 2,
       });
@@ -82,9 +85,9 @@ describe("JobListings", () => {
 
   describe("when user is on last page of job results", () => {
     it("doesn't show link to next page", async () => {
-      useFilteredJobs.mockReturnValue({ value: [] });
-      useCurrentPage.mockReturnValue(ref(2));
-      usePrevAndNextPages.mockReturnValue({
+      useFilteredJobsMock.mockReturnValue({ value: [] });
+      useCurrentPageMock.mockReturnValue(ref(2));
+      usePrevAndNextPagesMock.mockReturnValue({
         previousPage: 1,
         nextPage: undefined,
       });
@@ -95,9 +98,9 @@ describe("JobListings", () => {
     });
 
     it("shows link to previous page", async () => {
-      useFilteredJobs.mockReturnValue({ value: [] });
-      useCurrentPage.mockReturnValue(ref(2));
-      usePrevAndNextPages.mockReturnValue({
+      useFilteredJobsMock.mockReturnValue({ value: [] });
+      useCurrentPageMock.mockReturnValue(ref(2));
+      usePrevAndNextPagesMock.mockReturnValue({
         previousPage: 1,
         nextPage: undefined,
       });
