@@ -10,7 +10,12 @@
         </div>
       </div>
 
-      <accordion-element header="Degree" />
+      <job-filters-sidebar-checkbox-group
+        header="Degrees"
+        :unique-values="uniqueDegrees"
+        :mutation="ADD_SELECTED_DEGREES"
+        data-test="degrees-filter"
+      />
 
       <job-filters-sidebar-checkbox-group
         header="Job Types"
@@ -33,28 +38,37 @@
 import { defineComponent } from "vue";
 
 import ActionButton from "@/components/Shared/ActionButton.vue";
-import AccordionElement from "@/components/Shared/AccordionElement.vue";
 import JobFiltersSidebarCheckboxGroup from "@/components/JobResults/JobFiltersSidebar/JobFiltersSidebarCheckboxGroup.vue";
 
-import { useUniqueJobTypes, useUniqueOrganizations } from "@/store/composables";
-import { ADD_SELECTED_JOB_TYPES, ADD_SELECTED_ORGS } from "@/store/constants";
+import {
+  useUniqueDegrees,
+  useUniqueJobTypes,
+  useUniqueOrganizations,
+} from "@/store/composables";
+import {
+  ADD_SELECTED_JOB_TYPES,
+  ADD_SELECTED_ORGS,
+  ADD_SELECTED_DEGREES,
+} from "@/store/constants";
 
 export default defineComponent({
   name: "JobFiltersSidebar",
   components: {
     ActionButton,
-    AccordionElement,
     JobFiltersSidebarCheckboxGroup,
   },
   setup() {
     const uniqueJobTypes = useUniqueJobTypes();
     const uniqueOrganizations = useUniqueOrganizations();
+    const uniqueDegrees = useUniqueDegrees();
 
     return {
       uniqueJobTypes,
       uniqueOrganizations,
+      uniqueDegrees,
       ADD_SELECTED_JOB_TYPES,
       ADD_SELECTED_ORGS,
+      ADD_SELECTED_DEGREES,
     };
   },
 });

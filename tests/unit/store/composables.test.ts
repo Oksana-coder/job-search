@@ -3,9 +3,11 @@ jest.mock("vuex");
 
 import {
   useFetchJobsDispatch,
+  useFetchDegreesDispatch,
   useFilteredJobs,
   useUniqueJobTypes,
   useUniqueOrganizations,
+  useUniqueDegrees,
 } from "@/store/composables";
 
 const useStoreMock = useStore as jest.Mock;
@@ -50,6 +52,19 @@ describe("composables", () => {
     });
   });
 
+  describe("useUniqueDegrees", () => {
+    it("retrieves unique degrees from store", () => {
+      useStoreMock.mockReturnValue({
+        getters: {
+          UNIQUE_DEGREES: ["Master's"],
+        },
+      });
+
+      const result = useUniqueDegrees();
+      expect(result.value).toEqual(["Master's"]);
+    });
+  });
+
   describe("useFetchJobsDispatch", () => {
     it("sends call to fetch jobs from API", () => {
       const dispatch = jest.fn();
@@ -58,6 +73,17 @@ describe("composables", () => {
       });
       useFetchJobsDispatch();
       expect(dispatch).toHaveBeenCalledWith("FETCH_JOBS");
+    });
+  });
+
+  describe("useFetchDegreesDispatch", () => {
+    it("sends call to fetch degrees from API", () => {
+      const dispatch = jest.fn();
+      useStoreMock.mockReturnValue({
+        dispatch,
+      });
+      useFetchDegreesDispatch();
+      expect(dispatch).toHaveBeenCalledWith("FETCH_DEGREES");
     });
   });
 });

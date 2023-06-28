@@ -1,5 +1,5 @@
 import getters from "@/store/getters";
-import { createJob, createState } from "./utils";
+import { createDegree, createJob, createState } from "./utils";
 
 describe("getters", () => {
   describe("UNIQUE_ORGANIZATIONS", () => {
@@ -15,45 +15,6 @@ describe("getters", () => {
     });
   });
 
-  // describe("FILTERED_JOBS_BY_ORGANIZATIONS", () => {
-  //   it("identifies jobs that are associated with the given organizations", () => {
-  //     const state = {
-  //       jobs: [
-  //         { organization: "Google" },
-  //         { organization: "Amazon" },
-  //         { organization: "Microsoft" },
-  //       ],
-  //       selectedOrgs: ["Google", "Microsoft"],
-  //     };
-
-  //     const filteredJobs = getters.FILTERED_JOBS_BY_ORGANIZATIONS(state);
-  //     expect(filteredJobs).toEqual([
-  //       { organization: "Google" },
-  //       { organization: "Microsoft" },
-  //     ]);
-  //   });
-
-  //   describe("when the user has not selected any organizations", () => {
-  //     it("returns all jobs", () => {
-  //       const state = {
-  //         jobs: [
-  //           { organization: "Google" },
-  //           { organization: "Amazon" },
-  //           { organization: "Microsoft" },
-  //         ],
-  //         selectedOrgs: [],
-  //       };
-
-  //       const filteredJobs = getters.FILTERED_JOBS_BY_ORGANIZATIONS(state);
-  //       expect(filteredJobs).toEqual([
-  //         { organization: "Google" },
-  //         { organization: "Amazon" },
-  //         { organization: "Microsoft" },
-  //       ]);
-  //     });
-  //   });
-  // });
-
   describe("UNIQUE_JOB_TYPES", () => {
     it("finds unique job types from list of jobs", () => {
       const jobs = [
@@ -67,44 +28,17 @@ describe("getters", () => {
     });
   });
 
-  // describe("FILTERED_JOBS_BY_JOB_TYPES", () => {
-  //   it("identifies jobs that are associated with the given job types", () => {
-  //     const state = {
-  //       jobs: [
-  //         { jobType: "Full-time" },
-  //         { jobType: "Part-time" },
-  //         { jobType: "Temporary" },
-  //       ],
-  //       selectedJobTypes: ["Full-time", "Part-time"],
-  //     };
-
-  //     const filteredJobs = getters.FILTERED_JOBS_BY_JOB_TYPES(state);
-  //     expect(filteredJobs).toEqual([
-  //       { jobType: "Full-time" },
-  //       { jobType: "Part-time" },
-  //     ]);
-  //   });
-
-  //   describe("when the user has not selected any job types", () => {
-  //     it("returns all jobs", () => {
-  //       const state = {
-  //         jobs: [
-  //           { jobType: "Full-time" },
-  //           { jobType: "Part-time" },
-  //           { jobType: "Temporary" },
-  //         ],
-  //         selectedJobTypes: [],
-  //       };
-
-  //       const filteredJobs = getters.FILTERED_JOBS_BY_JOB_TYPES(state);
-  //       expect(filteredJobs).toEqual([
-  //         { jobType: "Full-time" },
-  //         { jobType: "Part-time" },
-  //         { jobType: "Temporary" },
-  //       ]);
-  //     });
-  //   });
-  // });
+  describe("UNIQUE_DEGREES", () => {
+    it("extracts unique degree values", () => {
+      const degrees = [
+        createDegree({ degree: "Master's" }),
+        createDegree({ degree: "Bachelor's" }),
+      ];
+      const state = createState({ degrees });
+      const result = getters.UNIQUE_DEGREES(state);
+      expect(result).toEqual(["Master's", "Bachelor's"]);
+    });
+  });
 
   describe("INCLUDE_JOB_BY_ORGANIZATION", () => {
     describe("when the user hasn't selected any organizations", () => {
@@ -148,13 +82,36 @@ describe("getters", () => {
     });
   });
 
+  describe("INCLUDE_JOB_BY_DEGREE", () => {
+    describe("when the user hasn't selected any degrees", () => {
+      it("includes job", () => {
+        const state = createState({
+          selectedDegrees: [],
+        });
+        const job = createJob({ degree: "Master's" });
+        const includeJob = getters.INCLUDE_JOB_BY_DEGREE(state)(job);
+        expect(includeJob).toBe(true);
+      });
+    });
+    it("identifies if job is associated with given degrees", () => {
+      const state = createState({
+        selectedDegrees: ["Master's", "Bachelor's"],
+      });
+      const job = createJob({ degree: "Master's" });
+      const includeJob = getters.INCLUDE_JOB_BY_DEGREE(state)(job);
+      expect(includeJob).toBe(true);
+    });
+  });
+
   describe("FILTERED_JOBS", () => {
-    it("filters jobs by organization and job type", () => {
+    it("filters jobs by organization, job type, and degree", () => {
       const INCLUDE_JOB_BY_ORGANIZATION = jest.fn().mockReturnValue(true);
       const INCLUDE_JOB_BY_JOB_TYPE = jest.fn().mockReturnValue(true);
+      const INCLUDE_JOB_BY_DEGREE = jest.fn().mockReturnValue(true);
       const mockGetters = {
         INCLUDE_JOB_BY_ORGANIZATION,
         INCLUDE_JOB_BY_JOB_TYPE,
+        INCLUDE_JOB_BY_DEGREE,
       };
 
       const job = createJob({ title: "Best job ever" });
@@ -166,6 +123,7 @@ describe("getters", () => {
       expect(result).toEqual([job]);
       expect(INCLUDE_JOB_BY_ORGANIZATION).toHaveBeenCalledWith(job);
       expect(INCLUDE_JOB_BY_JOB_TYPE).toHaveBeenCalledWith(job);
+      expect(INCLUDE_JOB_BY_DEGREE).toHaveBeenCalledWith(job);
     });
   });
 });
